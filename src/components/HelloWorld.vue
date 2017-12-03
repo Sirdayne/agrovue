@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <div class="field" v-for="f in fields">{{ f.newName }}</div>
+    <div v-for="i in items">{{ i.name }}</div>
     <h2>Essential Links</h2>
     <ul>
       <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
@@ -28,11 +29,17 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      fields: 'fields',
+      items: [
+        { name: 'steve' },
+        { name: 'max' },
+        { name: 'ben' }
+      ]
     }
   },
   created () {
-    this.msg = http.get().then.data
+    http.get('/fields/1').then(d => { this.fields = d.data })
+    this.items.push({ name: 'yahiko' })
   }
 }
 </script>
@@ -52,5 +59,13 @@ li {
 }
 a {
   color: #42b983;
+}
+.field{
+  display: inline-block;
+  width: auto;
+  padding: 8px;
+  margin: 3px;
+  font-size: 13px;
+  border: 1px solid #323232;
 }
 </style>
