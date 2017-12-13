@@ -1,7 +1,13 @@
 <template>
   <div class="hello">
-    <div class="field" v-for="f in fields">{{ f.newName }}</div>
-    <div v-for="i in items">{{ i.name }}</div>
+    <div class="auth" v-if="!token">
+      <h2>Authorization</h2>
+      <input type="text" placeholder="Пользователь" v-model="form.username">
+      <input type="text" placeholder="Пароль" v-model="form.password">
+      <button @click="login()">Войти</button>
+      <p>{{data}}</p>
+    </div>
+    <div class="field" v-if="fields" v-for="f in fields">{{ f.newName }}</div>
     <h2>Essential Links</h2>
     <ul>
       <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
@@ -29,17 +35,34 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      fields: 'fields',
+      fields: null,
       items: [
         { name: 'steve' },
         { name: 'max' },
         { name: 'ben' }
-      ]
+      ],
+      form: {
+        username: null,
+        password: null
+      },
+      data: null,
+      token: null
     }
   },
   created () {
     http.get('/fields/1').then(d => { this.fields = d.data })
     this.items.push({ name: 'yahiko' })
+
+    this.token = localStorage.getItem('token')
+  },
+  methods: {
+    login () {
+      let endpoint = 'token'
+      let data = `userName=${encodeURIComponent(this.form.username)}&password=${encodeURIComponent(this.form.password)}&grant_type=password`
+      http.postToken(endpoint, data).then(d => {
+        this.data = d.data
+      })
+    }
   }
 }
 </script>
@@ -67,5 +90,11 @@ a {
   margin: 3px;
   font-size: 13px;
   border: 1px solid #323232;
+}
+.auth{
+  margin: 25px 0px;
+}
+.auth input, .auth button{
+  padding: 5px
 }
 </style>
